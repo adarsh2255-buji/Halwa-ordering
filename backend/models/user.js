@@ -39,7 +39,13 @@ const userSchema = new mongoose.Schema({
             },
             message: 'Password must be at least 8 characters long and include at least one number and one special character.'
         }
-    }
+    },
+    wishlist: [
+        {
+            type: mongoose.Schema.Types.ObjectId,
+            ref : "Product"
+        }
+    ]
 })
 
 export default mongoose.model("User", userSchema);
