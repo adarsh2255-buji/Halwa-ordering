@@ -23,7 +23,7 @@ app.use('/api/auth', authRoutes);
 app.use('/api/admin', adminRoutes);
 app.use('/api/product', productRoutes);
 app.use('/api/orders', orderRoutes);
-app.use('api/wishlist', wishlistRoutes);
+app.use('/api/wishlist', wishlistRoutes);
  
 app.get('/', (req, res) => {
     res.send('Hello, World!');
