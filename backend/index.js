@@ -6,6 +6,7 @@ import authRoutes from './routes/authRoutes.js';
 import adminRoutes from './routes/adminRoutes.js';
 import productRoutes from './routes/productRoutes.js';
 import orderRoutes from './routes/orderRoutes.js';
+import wishlistRoutes from './routes/wishlistRoutes.js';
 
 
 // PORT
@@ -22,6 +23,7 @@ app.use('/api/auth', authRoutes);
 app.use('/api/admin', adminRoutes);
 app.use('/api/product', productRoutes);
 app.use('/api/orders', orderRoutes);
+app.use('api/wishlist', wishlistRoutes);
  
 app.get('/', (req, res) => {
     res.send('Hello, World!');
@@ -30,5 +32,3 @@ app.get('/', (req, res) => {
 app.listen(port, () => {
     console.log(`Server running at ${port}`)
 })
-
-// fuMLJVrqWjB52n1z
