@@ -35,7 +35,7 @@ export const addProduct = async (req, res) => {
 
 //Update an exisiting product
 export const updateProduct = async (req, res) => {
-    const { id: productId } = req.params;
+    const { id } = req.params;
     const updates = req.body;
 
     try {
@@ -43,7 +43,7 @@ export const updateProduct = async (req, res) => {
         if(!updatedProduct) {
             return res.status(404).json({ message: "Product not found" });
         }
-        res.status(200).json({ message:"Product updated successfully"})
+        res.status(200).json({ message:"Product updated successfully", updatedProduct})
     } catch (error) {
         res.status(404).json({ message: "Product not found" });
     }
@@ -74,6 +74,23 @@ export const getAllProducts = async (req, res) => {
         res.status(200).json(products);
     } catch (error) {
         res.status(500).json({ message: "Fetching products failed", error });
+        console.error(error);
+    }
+};
+
+// Get product by id
+
+export const getProductById = async (req, res) => {
+    const { id } = req.params;
+
+    try {
+        const product = await Product.findById(id);
+        if(!product) {
+            return res.status(404).json({ message: "Product not found" });
+        }
+        res.status(200).json(product);
+    } catch (error) {
+        res.status(500).json({ message: "Fetching product failed", error });
         console.error(error);
     }
 };
