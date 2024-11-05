@@ -10,10 +10,11 @@ const router = express.Router();
 // User routes
 router.post('/',authMiddleware, createOrder);
 router.get('/userOrder', authMiddleware, getUserOrders);
+router.patch('/cancel/:orderId', authMiddleware, cancelOrder);
 
 //Admin routes
 router.get('/admin', AdminMiddleware, getAllOrders);
-router.put('admin/:orderId', authMiddleware, updateOrderStatus);
-router.patch('/cancel/:orderId', authMiddleware, cancelOrder);
+router.put('/admin/:orderId', AdminMiddleware, updateOrderStatus);
+
 
 export default router;

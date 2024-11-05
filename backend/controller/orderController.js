@@ -90,14 +90,14 @@ export const cancelOrder = async(req, res) => {
 // Update order status (admin)
 
 export const updateOrderStatus = async(req, res) => {
-    const orderId = req.params.id;
+    const { orderId } = req.params;
     const { status } = req.body;
 
     try {
         const order = await Order.findByIdAndUpdate(
             orderId, 
             { status, updatedAt:Date.now() },
-            { new: true });
+            { new: true }); 
         if(!order) {
             return res.status(404).json({ message: "Order not found" });
         }
