@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
 
-const orderSchema = new mongoose.schema({
+const orderSchema = new mongoose.Schema({
     userId: {
         type: mongoose.Schema.Types.ObjectId,
         ref: "user",
@@ -19,7 +19,7 @@ const orderSchema = new mongoose.schema({
             }
         }
     ],
-    totalAmout: {
+    totalAmount: {
         type: Number,
         required: true
     },
@@ -31,6 +31,11 @@ const orderSchema = new mongoose.schema({
     address: {
         type: String,
         required: true
+    },
+    phoneNumber: {
+        type: String,
+        required: true,
+        match: /^\d{10}$/
     },
     paymentStatus: {
         tyep: String,

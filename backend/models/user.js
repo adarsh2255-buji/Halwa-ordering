@@ -14,7 +14,7 @@ const userSchema = new mongoose.Schema({
         enum: ["male", "female", "other"]
     },
     phoneNumber: {
-        type: String,
+        type: String, 
         match: /^\+?\d{1,15}$/,
         unique: true
     },

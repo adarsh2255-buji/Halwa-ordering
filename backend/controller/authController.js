@@ -68,18 +68,18 @@ export const login = async (req, res) => {
 // Update profile
 
 export const updateProfile = async (req, res) => {
-    const { username, gender, address, email } = req.body;
+    const { username, gender, address, email, phoneNumber } = req.body;
     const userId = req.userId;
 
     try {
         const updatedProfile = await user.findByIdAndUpdate(
             userId,
-            { username, gender, address, email },
+            { username, gender, address, email, phoneNumber },
             { new: true, runValidators: true }
         );
         res.status(200).json({ message: "Profile updated successfully", updatedProfile });
     } catch (error) {
-        res.status(500).json({ message: "Update profile failed", error });
+        res.status(500).json({ message: "Update profile failed",error });
         console.error(error);
     }
 };
