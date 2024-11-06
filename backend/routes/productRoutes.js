@@ -18,6 +18,8 @@ const router = express.Router();
 router.post('/addProduct', AdminMiddleware, upload.single('image'), addProduct );
 router.put('/updateProduct/:id',AdminMiddleware, updateProduct);
 router.delete('/deleteProduct/:id', AdminMiddleware, deleteProduct);
+router.get('/', authMiddleware, getAllProducts)
+
 router.get('/getProduct', AdminMiddleware, getAllProducts);
 router.get('/:id', AdminMiddleware, getProductById)
 

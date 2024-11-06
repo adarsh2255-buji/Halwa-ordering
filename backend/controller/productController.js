@@ -70,7 +70,41 @@ export const deleteProduct = async (req, res) => {
 
 export const getAllProducts = async (req, res) => {
     try {
-        const products = await Product.find({});
+       
+
+        const { name, category, minPrice, maxPrice } = req.query;
+
+        //Create a filter object based on query parameters
+        let filter = {};
+
+        //Add name filter (case-insensitive)
+        if(name) {
+            filter.name = { $regex: name,  $option: 'i' };
+        }
+        
+        //Add category filter
+        if(category) {
+            filter.category = category;
+        }
+        
+        //Add price filter (min and max)
+        if(minPrice && maxPrice) {
+            filter.price = { $gte: minPrice, $lte: maxPrice };
+        } else if(minPrice){
+            filter.price = { $gte: minPrice };
+        } else if(maxPrice){
+            filter.price = { $lte: maxPrice };
+        }
+        
+        //Apply filter to find products
+        const products = await Product.find(filter);
+
+        //Sort the products based on query parameters
+        if(req.query.sort === 'price-asc') {
+            products.sort((a, b) => a.price - b.price);
+        } else if(req.query.sort === 'price-desc') {
+            products.sort((a, b) => b.price - a.price);
+        }
         res.status(200).json(products);
     } catch (error) {
         res.status(500).json({ message: "Fetching products failed", error });
