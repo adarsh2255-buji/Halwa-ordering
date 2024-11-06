@@ -26,7 +26,16 @@ export const createOrder = async(req, res) => {
             if(!product) {
                 return res.status(404).json({ message: "Product not found" });
             }
+            if(product.quantity < item.quantity ) {
+                return res.status(400).json({ message: `Insufficient stock for ${product.name}` });
+            }
+
+            // Calculate total amount for this product
             totalAmount += product.price * item.quantity;
+
+            // Decrease the quantity of the product
+            product.quantity -= item.quantity;
+            await product.save();
         }
 
         // Create and save the new order
