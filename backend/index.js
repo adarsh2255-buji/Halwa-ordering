@@ -7,6 +7,7 @@ import adminRoutes from './routes/adminRoutes.js';
 import productRoutes from './routes/productRoutes.js';
 import orderRoutes from './routes/orderRoutes.js';
 import wishlistRoutes from './routes/wishlistRoutes.js';
+import analyticsRoutes from './routes/analyticsRoutes.js'
 
 
 // PORT
@@ -24,6 +25,7 @@ app.use('/api/admin', adminRoutes);
 app.use('/api/product', productRoutes);
 app.use('/api/orders', orderRoutes);
 app.use('/api/wishlist', wishlistRoutes);
+app.use('/api/analytics', analyticsRoutes);
  
 app.get('/', (req, res) => {
     res.send('Hello, World!');
