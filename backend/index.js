@@ -8,6 +8,7 @@ import productRoutes from './routes/productRoutes.js';
 import orderRoutes from './routes/orderRoutes.js';
 import wishlistRoutes from './routes/wishlistRoutes.js';
 import analyticsRoutes from './routes/analyticsRoutes.js'
+import inventoryRoutes from './routes/inventoryRoutes.js'
 
 
 // PORT
@@ -26,6 +27,7 @@ app.use('/api/product', productRoutes);
 app.use('/api/orders', orderRoutes);
 app.use('/api/wishlist', wishlistRoutes);
 app.use('/api/analytics', analyticsRoutes);
+app.use('/api/inventory', inventoryRoutes);
  
 app.get('/', (req, res) => {
     res.send('Hello, World!');
