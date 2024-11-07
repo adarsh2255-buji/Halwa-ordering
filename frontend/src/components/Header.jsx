@@ -3,7 +3,7 @@ import { FaSearch } from "react-icons/fa";
 import { IoMdCart } from "react-icons/io";
 import { CgProfile } from "react-icons/cg";
 import { MdHome, MdExplore, MdAccountCircle, MdShoppingCart } from "react-icons/md";
-
+import { Link } from 'react-router-dom';
 const Header = () => {
   const [isProfileOpen, setIsProfileOpen] = useState(false);
 
@@ -42,9 +42,14 @@ const Header = () => {
             />
             {isProfileOpen && (
               <div className="absolute right-0 mt-2 w-40 bg-white border rounded-lg shadow-lg py-2">
-                <a href="/profile" className="block px-4 py-2 text-gray-600 hover:bg-gray-100">Profile</a>
+                {/* <a href="/profile" className="block px-4 py-2 text-gray-600 hover:bg-gray-100">Profile</a>
                 <a href="/orders" className="block px-4 py-2 text-gray-600 hover:bg-gray-100">Orders</a>
-                <a href="/logout" className="block px-4 py-2 text-gray-600 hover:bg-gray-100">Logout</a>
+                <a href="/logout" className="block px-4 py-2 text-gray-600 hover:bg-gray-100">Logout</a> */}
+                <Link to='/profile' className="block px-4 py-2 text-gray-600 hover:bg-gray-100">Profile</Link>
+                <Link to='/profile' className="block px-4 py-2 text-gray-600 hover:bg-gray-100">Profile</Link>
+                <Link to='/profile' className="block px-4 py-2 text-gray-600 hover:bg-gray-100">Profile</Link>
+                <Link to='/profile' className="block px-4 py-2 text-gray-600 hover:bg-gray-100">Profile</Link>
+                
               </div>
             )}
           </div>
@@ -69,22 +74,22 @@ const Header = () => {
 
       {/* Mobile Navbar */}
       <div className="fixed inset-x-0 bottom-0 bg-white shadow-lg md:hidden flex justify-around py-2">
-        <a href="/" className="flex flex-col items-center text-gray-600">
+        <Link to="/" className="flex flex-col items-center text-gray-600">
           <MdHome className="text-2xl" />
           <span className="text-xs">Home</span>
-        </a>
-        <a href="/explore" className="flex flex-col items-center text-gray-600">
+        </Link>
+        <Link to="/explore" className="flex flex-col items-center text-gray-600">
           <MdExplore className="text-2xl" />
           <span className="text-xs">Explore</span>
-        </a>
-        <a href="/account" className="flex flex-col items-center text-gray-600">
+        </Link>
+        <Link to="/account" className="flex flex-col items-center text-gray-600">
           <MdAccountCircle className="text-2xl" />
           <span className="text-xs">Account</span>
-        </a>
-        <a href="/cart" className="flex flex-col items-center text-gray-600">
+        </Link>
+        <Link to="/cart" className="flex flex-col items-center text-gray-600">
           <MdShoppingCart className="text-2xl" />
           <span className="text-xs">Cart</span>
-        </a>
+        </Link>
       </div>
     </header>
   );
