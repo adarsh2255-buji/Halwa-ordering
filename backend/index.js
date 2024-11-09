@@ -7,8 +7,9 @@ import adminRoutes from './routes/adminRoutes.js';
 import productRoutes from './routes/productRoutes.js';
 import orderRoutes from './routes/orderRoutes.js';
 import wishlistRoutes from './routes/wishlistRoutes.js';
-import analyticsRoutes from './routes/analyticsRoutes.js'
-import inventoryRoutes from './routes/inventoryRoutes.js'
+import analyticsRoutes from './routes/analyticsRoutes.js';
+import inventoryRoutes from './routes/inventoryRoutes.js';
+import cors from 'cors';
 
 
 // PORT
@@ -20,6 +21,7 @@ connectDB();
 const app = express();
 app.use(express.json())
 app.use(cookieParser())
+app.use(cors());
 
 app.use('/api/auth', authRoutes);
 app.use('/api/admin', adminRoutes);

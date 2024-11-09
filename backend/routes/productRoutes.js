@@ -18,7 +18,7 @@ const router = express.Router();
 router.post('/addProduct', AdminMiddleware, upload.single('image'), addProduct );
 router.put('/updateProduct/:id',AdminMiddleware, updateProduct);
 router.delete('/deleteProduct/:id', AdminMiddleware, deleteProduct);
-router.get('/', authMiddleware, getAllProducts)
+router.get('/', getAllProducts)
 
 router.get('/getProduct', AdminMiddleware, getAllProducts);
 router.get('/:id', AdminMiddleware, getProductById)
@@ -29,4 +29,4 @@ router.put('/:productId/review', authMiddleware, updateReview);
 router.delete('/:productId/review', authMiddleware, deleteReview);
 router.get('/:productId/review', authMiddleware,getProductReviews)
 
-export default router;
+export default router; 
