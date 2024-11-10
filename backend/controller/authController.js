@@ -1,6 +1,7 @@
 import user from "../models/user.js";
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken'
+import profile from "../models/profile.js";
 
 
 // user signup
@@ -8,7 +9,7 @@ export const signup = async (req, res) => {
     const { email , password } = req.body;
     try {
         //check if user already exisiting by email
-        const existingUser = await user.findOne({ email });
+        const existingUser = await user.findOne({ email }); 
         if (existingUser) {
             return res.status(400).json({ message: "User already exist" });
         }
@@ -19,9 +20,15 @@ export const signup = async (req, res) => {
         //create and save new user
         const newUser = new user({ email, password: hashedPassword });
         await newUser.save();
+
+        // Create an associated profile document for additional details
+        const newUserProfile = new profile({ userId: newUser._id }); 
+        await newUserProfile.save();
+
         res.status(201).json({ message: "User created successfully" });
     } catch (error) {
         res.status(500).json({ message: "Signup failed", error })
+        console.error(error);
     }
 }
 
@@ -69,15 +76,18 @@ export const login = async (req, res) => {
 // Update profile
 
 export const updateProfile = async (req, res) => {
-    const { username, gender, address, email, phoneNumber } = req.body;
     const userId = req.userId;
+    const { username, gender, address, phoneNumber } = req.body;
 
     try {
-        const updatedProfile = await user.findByIdAndUpdate(
-            userId,
-            { username, gender, address, email, phoneNumber },
+        const updatedProfile = await profile.findByIdAndUpdate(
+            {userId},
+            { username, gender, address, phoneNumber },
             { new: true, runValidators: true }
         );
+        if (!updatedProfile) {
+            return res.status(404).json({ message: "Profile not found" });
+        }
         res.status(200).json({ message: "Profile updated successfully", updatedProfile });
     } catch (error) {
         res.status(500).json({ message: "Update profile failed",error });

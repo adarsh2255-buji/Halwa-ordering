@@ -20,7 +20,7 @@ const Header = () => {
         {/* Left Section: Logo */}
         <div className="flex items-center space-x-2">
           <div className="text-2xl font-bold text-gray-800">
-            HalwaStore
+            <Link to='/'>HalwaStore</Link>
           </div>
         </div>
 
@@ -47,7 +47,7 @@ const Header = () => {
                 {/* <a href="/profile" className="block px-4 py-2 text-gray-600 hover:bg-gray-100">Profile</a>
                 <a href="/orders" className="block px-4 py-2 text-gray-600 hover:bg-gray-100">Orders</a>
                 <a href="/logout" className="block px-4 py-2 text-gray-600 hover:bg-gray-100">Logout</a> */}
-                <Link to='/profile' className="block px-4 py-2 text-gray-600 hover:bg-gray-100">Profile</Link>
+                <Link to='/signup' className="block px-4 py-2 text-gray-600 hover:bg-gray-100">Sign up</Link>
                 <Link to='/profile' className="block px-4 py-2 text-gray-600 hover:bg-gray-100">Profile</Link>
                 <Link to='/profile' className="block px-4 py-2 text-gray-600 hover:bg-gray-100">Profile</Link>
                 <Link to='/profile' className="block px-4 py-2 text-gray-600 hover:bg-gray-100">Profile</Link>
