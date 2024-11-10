@@ -47,10 +47,11 @@ const Header = () => {
                 {/* <a href="/profile" className="block px-4 py-2 text-gray-600 hover:bg-gray-100">Profile</a>
                 <a href="/orders" className="block px-4 py-2 text-gray-600 hover:bg-gray-100">Orders</a>
                 <a href="/logout" className="block px-4 py-2 text-gray-600 hover:bg-gray-100">Logout</a> */}
-                <Link to='/signup' className="block px-4 py-2 text-gray-600 hover:bg-gray-100">Sign up</Link>
-                <Link to='/profile' className="block px-4 py-2 text-gray-600 hover:bg-gray-100">Profile</Link>
-                <Link to='/profile' className="block px-4 py-2 text-gray-600 hover:bg-gray-100">Profile</Link>
-                <Link to='/profile' className="block px-4 py-2 text-gray-600 hover:bg-gray-100">Profile</Link>
+                <Link to='/signup' className="block px-4 py-2 text-gray-600 hover:bg-gray-100">Sign Up</Link>
+                <Link to='/login' className="block px-4 py-2 text-gray-600 hover:bg-gray-100">Log In</Link>
+                <Link to='/logout' className="block px-4 py-2 text-gray-600 hover:bg-gray-100">Log Out</Link>
+                <Link to='/profile' className="block px-4 py-2 text-gray-600 hover:bg-gray-100">My Profile</Link>
+                <Link to='/orders' className="block px-4 py-2 text-gray-600 hover:bg-gray-100">Orders</Link>
                 
               </div>
             )}
