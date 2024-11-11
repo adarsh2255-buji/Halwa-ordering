@@ -3,12 +3,14 @@ import { FaSearch } from "react-icons/fa";
 import { IoMdCart } from "react-icons/io";
 import { CgProfile } from "react-icons/cg";
 import { MdHome, MdExplore, MdAccountCircle, MdShoppingCart } from "react-icons/md";
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { UserContext } from '../context/UserContext';
 
 const Header = () => {
   const [isProfileOpen, setIsProfileOpen] = useState(false);
   const { user, handleLogout } = useContext(UserContext);
+
+  const navigate = useNavigate();
 
   // Reference to the profile icon and dropdown
   const profileRef = useRef(null);
@@ -34,6 +36,11 @@ const Header = () => {
       window.removeEventListener('click', handleClickOutside);
     };
   }, []);
+
+  const handleLogoutClick = () => {
+    handleLogout(); // Call the context logout function
+    navigate('/');  // Redirect to home page after logout
+  };
 
   return (
     <>
@@ -73,7 +80,7 @@ const Header = () => {
                     <>
                       <Link to='/profile' className="block px-4 py-2 text-gray-600 hover:bg-gray-100">My Profile</Link>
                       <Link to='/orders' className="block px-4 py-2 text-gray-600 hover:bg-gray-100">Orders</Link>
-                      <button onClick={handleLogout} className="block px-4 py-2 text-gray-600 hover:bg-gray-100">Log Out</button>
+                      <button onClick={handleLogoutClick} className="block px-4 py-2 text-gray-600 hover:bg-gray-100">Log Out</button>
                     </>
                   ) : (
                     <>
