@@ -4,6 +4,7 @@ export const UserContext = createContext();
 
 const UserProvider = ({ children }) => {
     const [ user, setUser ] = useState(null);
+    
 
     //check if the user is logged in whenn the component is mounted
 

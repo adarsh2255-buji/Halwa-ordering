@@ -8,6 +8,7 @@ import Home from './pages/Home.jsx'
 import Signup from './pages/Signup.jsx'
 import Login from './pages/Login.jsx'
 import UserProvider from './context/UserContext.jsx'
+import Profile from './pages/Profile.jsx'
 
 const router = createBrowserRouter([
   {
@@ -26,6 +27,9 @@ const router = createBrowserRouter([
       },{
         path: '/logout',
         element: <Home />
+      },{
+        path: '/profile',
+        element: <Profile />
       }
     ]
   }

@@ -1,7 +1,8 @@
 import user from "../models/user.js";
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken'
-import profile from "../models/profile.js";
+import Profile from "../models/profile.js";
+
 
 
 // user signup
@@ -22,7 +23,7 @@ export const signup = async (req, res) => {
         await newUser.save();
 
         // Create an associated profile document for additional details
-        const newUserProfile = new profile({ userId: newUser._id }); 
+        const newUserProfile = new Profile({ userId: newUser._id }); 
         await newUserProfile.save();
 
         res.status(201).json({ message: "User created successfully" });
@@ -60,7 +61,7 @@ export const login = async (req, res) => {
             { id: existingUser._id, username : existingUser.username }, process.env.JWT_SECRET, { expiresIn: "1d" });
 
         // Set Token in http only cookies
-        res.cookie('authToken', token, {
+        res.cookie('token', token, {
             httpOnly: true,
             secure: true, // Set to true for HTTPS only
             maxAge: 60 * 60 * 1000 // 1 hour
@@ -75,42 +76,42 @@ export const login = async (req, res) => {
 
 // Update profile
 
-export const updateProfile = async (req, res) => {
-    const userId = req.userId;
-    const { username, gender, address, phoneNumber } = req.body;
+// export const updateProfile = async (req, res) => {
+//     const userId = req.userId;
+//     const { username, gender, address, phoneNumber } = req.body;
 
-    try {
-        const updatedProfile = await profile.findByIdAndUpdate(
-            {userId},
-            { username, gender, address, phoneNumber },
-            { new: true, runValidators: true }
-        );
-        if (!updatedProfile) {
-            return res.status(404).json({ message: "Profile not found" });
-        }
-        res.status(200).json({ message: "Profile updated successfully", updatedProfile });
-    } catch (error) {
-        res.status(500).json({ message: "Update profile failed",error });
-        console.error(error);
-    }
-};
+//     try {
+//         const updatedProfile = await Profile.findByIdAndUpdate(
+//             {userId},
+//             { username, gender, address, phoneNumber },
+//             { new: true, runValidators: true }
+//         );
+//         if (!updatedProfile) {
+//             return res.status(404).json({ message: "Profile not found" });
+//         }
+//         res.status(200).json({ message: "Profile updated successfully", updatedProfile });
+//     } catch (error) {
+//         res.status(500).json({ message: "Update profile failed",error });
+//         console.error(error);
+//     }
+// };
 
 //Get user profile
 
-export const getUserProfile = async (req, res) => {
-    const userId = req.userId;
+// export const getUserProfile = async (req, res) => {
+//     const userId = req.userId;
 
-    try {
-        const userProfile = await user.findById(userId);
-        if (!userProfile) {
-            return res.status(404).json({ message: "User not found" });
-        }
-        res.status(200).json({ message: "User profile fetched successfully", userProfile });
-    } catch (error) {
-        res.status(500).json({ message: "Get user profile failed", error });
-        console.error(error);
-    }
-};
+//     try {
+//         const userProfile = await user.findById(userId);
+//         if (!userProfile) {
+//             return res.status(404).json({ message: "User not found" });
+//         }
+//         res.status(200).json({ message: "User profile fetched successfully", userProfile });
+//     } catch (error) {
+//         res.status(500).json({ message: "Get user profile failed", error });
+//         console.error(error);
+//     }
+// };
 
 // Update password
 
@@ -142,6 +143,55 @@ export const updatePassword = async (req, res) => {
     } catch (error) {
         res.status(500).json({ message: "Password update failed", error });
         console.error(error)
+    }
+};
+
+// To create or update a user profile
+
+export const createOrUpdateProfile = async (req, res) => {
+
+
+    try {
+        const { username, gender, phone, address } = req.body;
+
+       // Ensure userId is populated from the authenticated user's session
+        const userId = req.user._id;// Retrieve userId from request, 
+
+        const profile = await Profile.findOne({ userId });
+        if(profile){
+            // Update profile if it already exists
+            profile.username = username;
+            profile.gender = gender;
+            profile.phone = phone;
+            profile.address = address;
+            await profile.save();
+            res.status(200).json({ message: "Profile updated successfully", profile });
+        } else {
+            // Create new profile if it doesn't exist
+            const newProfile = new Profile({ userId, username, gender, phone, address });
+            await newProfile.save();
+            res.status(201).json({ message: "Profile created successfully", profile });
+        }
+    } catch (error) {
+        res.status(500).json({ message: "Profile creation failed", error });
+        console.error(error);
+    }
+}
+
+// To get a user profile by userID
+
+export const getUserProfileById = async (req, res) => {
+
+    try {
+        const userId = req.user._id;
+        const profile = await Profile.findOne({ userId });
+        if (!profile) {
+            return res.status(404).json({ message: "User not found" });
+        }
+        res.status(200).json({ message: "User profile fetched successfully", profile });
+    } catch (error) {
+        res.status(500).json({ message: "Get user profile failed", error });
+        console.error(error);
     }
 };
 
