@@ -10,6 +10,7 @@ const Signup = () => {
     });
     const [error, setError] = useState('');
     const [success, setSuccess] = useState("");
+    
 
     const navigate = useNavigate()
     const handleChange = (e) => {

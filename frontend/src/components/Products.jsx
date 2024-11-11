@@ -11,7 +11,6 @@ const Products = () => {
         const response = await api.get('/product');
         setProducts(response.data);
         setLoading(false);
-        console.log(response.data)
       } catch (error) {
         setError(error.message);
         setLoading(false);

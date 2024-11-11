@@ -7,6 +7,7 @@ import Root from './components/Root.jsx'
 import Home from './pages/Home.jsx'
 import Signup from './pages/Signup.jsx'
 import Login from './pages/Login.jsx'
+import UserProvider from './context/UserContext.jsx'
 
 const router = createBrowserRouter([
   {
@@ -22,6 +23,9 @@ const router = createBrowserRouter([
       },{
         path: '/login',
         element: <Login />
+      },{
+        path: '/logout',
+        element: <Home />
       }
     ]
   }
@@ -29,6 +33,8 @@ const router = createBrowserRouter([
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
+    <UserProvider>
     <RouterProvider router={router}/>
+    </UserProvider>
   </StrictMode>,
 )

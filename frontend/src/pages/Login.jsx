@@ -1,6 +1,7 @@
-import React, { useState } from 'react'
+import React, { useContext, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import api from '../api';
+import { UserContext } from '../context/UserContext';
 
 const Login = () => {
     const [formData, SetFormData] = useState({
@@ -9,6 +10,7 @@ const Login = () => {
     });
     const [error, setError] = useState('');
     const [success, setSuccess] = useState("");
+    const { handleLogin } = useContext( UserContext )
 
     const navigate = useNavigate()
 
@@ -25,11 +27,15 @@ const Login = () => {
 
         try {
             const response = await api.post('/auth/login', formData);
-            setSuccess("Login successful");
-            SetFormData({
-                email: '',
-                password: '',
-            })
+            console.log(response.data)
+            if(response.data){
+                handleLogin(response.data);
+                setSuccess("Login successful");
+                SetFormData({
+                    email: '',
+                    password: '',
+                })
+            }
             setError("");
             navigate('/')
         } catch (error) {

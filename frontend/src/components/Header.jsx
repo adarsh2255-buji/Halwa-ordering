@@ -1,12 +1,15 @@
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
 import { FaSearch } from "react-icons/fa";
 import { IoMdCart } from "react-icons/io";
 import { CgProfile } from "react-icons/cg";
 import { MdHome, MdExplore, MdAccountCircle, MdShoppingCart } from "react-icons/md";
 import { Link } from 'react-router-dom';
 import Home from '../pages/Home';
+import { UserContext } from '../context/UserContext';
+
 const Header = () => {
   const [isProfileOpen, setIsProfileOpen] = useState(false);
+  const { user, handleLogout } = useContext(UserContext)
 
   const toggleProfileDropdown = () => {
     setIsProfileOpen(!isProfileOpen);
@@ -33,6 +36,9 @@ const Header = () => {
             className="bg-transparent focus:outline-none text-gray-700 w-full px-2"
           />
         </div>
+        <div>
+        <p className='text-2xl'>{user ? user.username : "Guest"}</p>
+        </div>
 
         {/* Right: Profile Dropdown and Cart */}
         <div className="hidden md:flex items-center space-x-4">
@@ -44,14 +50,23 @@ const Header = () => {
             />
             {isProfileOpen && (
               <div className="absolute right-0 mt-2 w-40 bg-white border rounded-lg shadow-lg py-2">
-                {/* <a href="/profile" className="block px-4 py-2 text-gray-600 hover:bg-gray-100">Profile</a>
-                <a href="/orders" className="block px-4 py-2 text-gray-600 hover:bg-gray-100">Orders</a>
-                <a href="/logout" className="block px-4 py-2 text-gray-600 hover:bg-gray-100">Logout</a> */}
-                <Link to='/signup' className="block px-4 py-2 text-gray-600 hover:bg-gray-100">Sign Up</Link>
-                <Link to='/login' className="block px-4 py-2 text-gray-600 hover:bg-gray-100">Log In</Link>
-                <Link to='/logout' className="block px-4 py-2 text-gray-600 hover:bg-gray-100">Log Out</Link>
-                <Link to='/profile' className="block px-4 py-2 text-gray-600 hover:bg-gray-100">My Profile</Link>
-                <Link to='/orders' className="block px-4 py-2 text-gray-600 hover:bg-gray-100">Orders</Link>
+                {user ? (
+                  <>
+                  
+                  <Link to='/profile' className="block px-4 py-2 text-gray-600 hover:bg-gray-100">My Profile</Link>
+                  <Link to='/orders' className="block px-4 py-2 text-gray-600 hover:bg-gray-100">Orders</Link>
+                  <Link to='/logout' onClick={handleLogout} className="block px-4 py-2 text-gray-600 hover:bg-gray-100">Log Out</Link>
+                  </>
+                ) : (
+                  <>
+                  <Link to='/signup' className="block px-4 py-2 text-gray-600 hover:bg-gray-100">Sign Up</Link>
+                  <Link to='/login' className="block px-4 py-2 text-gray-600 hover:bg-gray-100">Log In</Link>
+                  </>
+                )}
+                
+                
+                
+                
                 
               </div>
             )}
