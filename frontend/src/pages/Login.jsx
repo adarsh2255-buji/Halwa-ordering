@@ -1,23 +1,27 @@
 import React, { useContext, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import api from '../api';
-import { UserContext } from '../context/UserContext';
+import { UserContext, useUser } from '../context/UserContext';
 
 const Login = () => {
-    const [formData, SetFormData] = useState({
-        email: '',
-        password: '',
-    });
+    // const [formData, SetFormData] = useState({
+    //     email: '',
+    //     password: '',
+    // });
+    const { login } = useUser();
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
+    const { setUser } = useUser()
+
     const [error, setError] = useState('');
     const [success, setSuccess] = useState("");
-    const { handleLogin } = useContext( UserContext )
 
     const navigate = useNavigate()
 
-    const handleChange = (e) => {
-        const { name , value} = e.target;
-        SetFormData({...formData, [name]: value });
-    }
+    // const handleChange = (e) => {
+    //     const { name , value} = e.target;
+    //     SetFormData({...formData, [name]: value });
+    // }
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -26,18 +30,15 @@ const Login = () => {
         setSuccess('');
 
         try {
-            const response = await api.post('/auth/login', formData);
+            const response = await api.post('/auth/login', { email, password});
+            setUser(response.data.user);
             console.log(response.data)
-            if(response.data){
-                handleLogin(response.data);
-                setSuccess("Login successful");
-                SetFormData({
-                    email: '',
-                    password: '',
-                })
-            }
+            // cleare email and password
+            setEmail('');
+            setPassword('');
             setError("");
-            navigate('/')
+            navigate('/');
+            
         } catch (error) {
             setError(error.response?.data?.message || "Login failed")
             console.log(error.response?.data?.message)
@@ -61,8 +62,8 @@ const Login = () => {
                         <input 
                         type="email"
                         name='email'
-                        value={formData.email}
-                        onChange={handleChange}
+                        value={email}
+                        onChange={(e) => setEmail(e.target.value)}
                         className='w-full px-4 py-2 mt-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500' 
                         required
                         />
@@ -74,8 +75,8 @@ const Login = () => {
                         <input 
                         type="password"
                         name='password'
-                        value={formData.password}
-                        onChange={handleChange}
+                        value={password}
+                        onChange={(e) => setPassword(e.target.value)}
                         className='w-full px-4 py-2 mt-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500' 
                         autoComplete='true'
                         required

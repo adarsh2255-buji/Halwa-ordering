@@ -1,22 +1,29 @@
 import React, { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import api from '../api';
+import { useUser } from '../context/UserContext';
 
 const Signup = () => {
-    const [formData, SetFormData] = useState({
-        email: '',
-        password: '',
-        confirmPassword: ''
-    });
+    // const [formData, SetFormData] = useState({
+    //     email: '',
+    //     password: '',
+    //     confirmPassword: ''
+    // });
+  
+    const [ email, setEmail ] = useState('');
+    const [password, setPassword ] = useState('');
+    const [confirmPassword, setConfirmPassword ] = useState('');
     const [error, setError] = useState('');
     const [success, setSuccess] = useState("");
+
+    const { setUser } = useUser();
     
 
     const navigate = useNavigate()
-    const handleChange = (e) => {
-        const { name , value} = e.target;
-        SetFormData({...formData, [name]: value });
-    }
+    // const handleChange = (e) => {
+    //     const { name , value} = e.target;
+    //     SetFormData({...formData, [name]: value });
+    // }
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -25,24 +32,25 @@ const Signup = () => {
         setSuccess('');
 
         // validation
-        if (formData.password!== formData.confirmPassword) {
+        if (password!== confirmPassword) {
             setError("Passwords do not match");
             return;
         }
-        if (formData.password.length < 6) {
+        if (password.length < 6) {
             setError("Password must be at least 6 characters long");
             return;
           }
 
         try {
-            const response = await api.post('/auth/signup', formData);
+            const response = await api.post('/auth/signup', { email, password });
+            setUser(response.data.user)
             setSuccess("Signup successful");
-            console.log(formData)
-            SetFormData({
-                email: '',
-                password: '',
-                confirmPassword: ''
-            })
+            console.log(email);
+            console.log(password)
+            //clear email and password
+            setEmail('');
+            setPassword('');
+            setConfirmPassword('');
             setError("");
             navigate('/')
         } catch (error) {
@@ -68,8 +76,8 @@ const Signup = () => {
                         <input 
                         type="email"
                         name='email'
-                        value={formData.email}
-                        onChange={handleChange}
+                        value={email}
+                        onChange={(e) => setEmail(e.target.value)}
                         className='w-full px-4 py-2 mt-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500' 
                         required
                         />
@@ -81,8 +89,8 @@ const Signup = () => {
                         <input 
                         type="password"
                         name='password'
-                        value={formData.password}
-                        onChange={handleChange}
+                        value={password}
+                        onChange={(e) => setPassword(e.target.value)}
                         className='w-full px-4 py-2 mt-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500' 
                         autoComplete='true'
                         required
@@ -95,8 +103,8 @@ const Signup = () => {
                         <input 
                         type="password"
                         name='confirmPassword'
-                        value={formData.confirmPassword}
-                        onChange={handleChange}
+                        value={confirmPassword}
+                        onChange={(e) => setConfirmPassword(e.target.value)}
                         className='w-full px-4 py-2 mt-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500' 
                         autoComplete='true'
                         required

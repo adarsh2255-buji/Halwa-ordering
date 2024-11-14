@@ -1,5 +1,6 @@
 import mongoose from "mongoose";
 
+
 const userSchema = new mongoose.Schema({
     email: {
         type: String,
@@ -11,6 +12,10 @@ const userSchema = new mongoose.Schema({
         type: String,
         required: true,
         select: false, // Password is not returned in the response
+    },
+    profile : {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Profile"
     },
     wishlist: [
         {

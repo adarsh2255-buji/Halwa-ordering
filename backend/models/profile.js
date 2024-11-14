@@ -3,7 +3,7 @@ import mongoose from "mongoose";
 const profileSchema = new mongoose.Schema({
     userId: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: "user",
+        ref: "User",
         required: true,
         unique: true
     },
@@ -19,15 +19,19 @@ const profileSchema = new mongoose.Schema({
         type: String,
         enum: ["male", "female", "other"]
     },
-    phone: {
+    phoneNumber: {
         type: String, 
-        match: /^\+?\d{1,15}$/,
+        match: [/^\d{10}$/, 'Please enter a valid 10-digit phone number'],
         unique: true,
         sparse: true // This ensures uniqueness only for non-null values
     },
+    email: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User",
+        unique: true,
+    },
     address: {
-        type: String,
-        trim: true
+        type: mongoose.Schema.Types.ObjectId
     },
 
 }) 

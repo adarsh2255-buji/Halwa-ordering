@@ -1,7 +1,8 @@
-import user from "../models/user.js";
+import User from "../models/user.js";
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken'
 import Profile from "../models/profile.js";
+import Address from "../models/address.js";
 
 
 
@@ -10,7 +11,7 @@ export const signup = async (req, res) => {
     const { email , password } = req.body;
     try {
         //check if user already exisiting by email
-        const existingUser = await user.findOne({ email }); 
+        const existingUser = await User.findOne({ email }); 
         if (existingUser) {
             return res.status(400).json({ message: "User already exist" });
         }
@@ -19,12 +20,8 @@ export const signup = async (req, res) => {
         const hashedPassword = await bcrypt.hash(password, 10);
 
         //create and save new user
-        const newUser = new user({ email, password: hashedPassword });
-        await newUser.save();
-
-        // Create an associated profile document for additional details
-        const newUserProfile = new Profile({ userId: newUser._id }); 
-        await newUserProfile.save();
+        const user = new User({ email, password: hashedPassword });
+        await user.save();
 
         res.status(201).json({ message: "User created successfully" });
     } catch (error) {
@@ -45,27 +42,27 @@ export const login = async (req, res) => {
         }
 
         // Check if the user exists
-        const existingUser = await user.findOne({ email }).select('+password');
-        if (!existingUser) {
+        const user = await User.findOne({ email }).select('+password');
+        if (!user) {
             return res.status(400).json({ message: "User not found" });
         }
 
         // Compare password with hashed password
-        const isMatch = await bcrypt.compare(password, existingUser.password);
+        const isMatch = await bcrypt.compare(password, user.password);
         if (!isMatch) {
             return res.status(400).json({ message: "Invalid credentials" });
         }
 
         // Generate JWT token
         const token = jwt.sign(
-            { id: existingUser._id, username : existingUser.username }, process.env.JWT_SECRET, { expiresIn: "1d" });
+            { userId: user._id, }, process.env.JWT_SECRET, { expiresIn: "1d" });
 
         // Set Token in http only cookies
         res.cookie('token', token, {
             httpOnly: true,
             secure: true, // Set to true for HTTPS only
             maxAge: 60 * 60 * 1000 // 1 hour
-        })
+        }) 
 
         res.status(200).json({ message: "Login successful", token });
     } catch (error) {
@@ -73,6 +70,90 @@ export const login = async (req, res) => {
         console.error(error);
     }
 }
+
+// Add profile data
+export const addProfileData = async (req, res) => {
+    const { username, gender, addressDetails, phoneNumber } = req.body;
+    
+    try {
+        const userId = req.user._id;
+
+        // Check if the user already has a profile
+        const existingProfile = await Profile.findOne({ userId });
+        if (existingProfile) {
+            return res.status(400).json({ message: "Profile already exists" });
+        }
+
+        // Create address document
+        const newAddress = new Address({
+            ...addressDetails,
+            user: userId
+        });
+        await newAddress.save();
+
+        // Create profile document
+        const newProfile = new Profile({
+            username,
+            gender,
+            email: userId,
+            address: newAddress._id,
+            phoneNumber,
+            userId
+        })
+        await newProfile.save();
+
+        // Update the user with profile and address references
+        const user = await User.findOneAndUpdate(
+            { _id: userId },
+            { profile: newProfile._id},
+            { new:true }
+        ).populate('profile').populate({
+            path: 'profile',
+            populate: { path: 'address'}
+        });
+        res.status(200).json({ message: "Profile added successfully", user });
+    } catch (error) { 
+        res.status(500).json({ message: "Add profile data failed", error });
+        console.error(error);
+    }
+}
+
+// Get profile with user and address
+
+export const getUserWithProfile = async (req, res) => {
+    try {
+        const userId = req.user._id;
+
+        const user = await User.findById(userId)
+        .populate({
+            path:'profile',
+            populate: { path: 'address'}
+        });
+        if(!user) {
+            return res.status(404).json({ message: "User not found" });
+        }
+        res.status(200).json({ message: "User fetched successfully", user });
+    } catch (error) {
+        res.status(500).json({ message: "Get user with profile failed", error });
+        console.error(error);
+    }
+}
+
+//Get user 
+export const getUser = async (req, res) => {
+    const userId = req.user._id;
+    try {
+        const singleUser = await User.findOne({userId}).populate('Profile');
+        if (!singleUser) {
+            return res.status(404).json({ message: "User not found" });
+        }
+
+        res.status(200).json({ message: "User fetched successfully", singleUser });
+    } catch (error) {
+        res.status(500).json({ message: "Get user failed", error });
+        console.error(error);
+    }
+};
 
 // Update profile
 
@@ -176,7 +257,7 @@ export const createOrUpdateProfile = async (req, res) => {
         res.status(500).json({ message: "Profile creation failed", error });
         console.error(error);
     }
-}
+} 
 
 // To get a user profile by userID
 
@@ -194,7 +275,7 @@ export const getUserProfileById = async (req, res) => {
         console.error(error);
     }
 };
-
+ 
 // logout
 
 export const logout = (req, res) => {

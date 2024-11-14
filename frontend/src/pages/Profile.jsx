@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import api from '../api';
 
-const ProfileForm = () => {
+const Profile = () => {
   const [profile, setProfile] = useState({
     username: '',
     gender: '',
@@ -169,4 +169,4 @@ const ProfileForm = () => {
   );
 };
 
-export default ProfileForm;
+export default Profile;
