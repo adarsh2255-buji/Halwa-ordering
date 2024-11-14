@@ -4,6 +4,8 @@ import { IoMdCart } from "react-icons/io";
 import { CgProfile } from "react-icons/cg";
 import { Link, useNavigate } from 'react-router-dom';
 import { UserContext } from '../context/UserContext';
+import { MdHome, MdExplore, MdAccountCircle, MdShoppingCart } from "react-icons/md";
+
 // import { useUser } from '../context/UserContext';
 
 const Header = () => {
@@ -37,8 +39,8 @@ const Header = () => {
         <header className="bg-white shadow-md fixed top-0 left-0 w-full z-10">
             <div className="container mx-auto px-4 py-4 flex items-center justify-between">
                 {/* Logo */}
-                <div className="text-2xl font-bold text-gray-800">
-                    <Link to='/'>HalwaStore</Link>
+                <div className="flex items-center space-x-2">
+                    <Link to='/' className='text-2xl font-bold text-gray-800'>HalwaStore</Link>
                 </div>
 
                 {/* Center: Search Bar */}
@@ -90,6 +92,35 @@ const Header = () => {
                     </div>
                 </div>
             </div>
+            {/* Mobile Search Bar */}
+      <div className="flex md:hidden items-center bg-gray-100 px-2 py-1 rounded-lg mx-4 mt-2">
+        <FaSearch className="text-gray-600" />
+        <input 
+          type="text" 
+          placeholder="Search" 
+          className="bg-transparent focus:outline-none text-gray-700 w-full px-2"
+        />
+      </div>
+
+      {/* Mobile Navbar */}
+      <div className="fixed inset-x-0 bottom-0 bg-white shadow-lg md:hidden flex justify-around py-2">
+        <a href="/" className="flex flex-col items-center text-gray-600">
+          <MdHome className="text-2xl" />
+          <span className="text-xs">Home</span>
+        </a>
+        <a href="/explore" className="flex flex-col items-center text-gray-600">
+          <MdExplore className="text-2xl" />
+          <span className="text-xs">Explore</span>
+        </a>
+        <a href="/account" className="flex flex-col items-center text-gray-600">
+          <MdAccountCircle className="text-2xl" />
+          <span className="text-xs">Account</span>
+        </a>
+        <a href="/cart" className="flex flex-col items-center text-gray-600">
+          <MdShoppingCart className="text-2xl" />
+          <span className="text-xs">Cart</span>
+        </a>
+      </div>
         </header>
     );
 };
