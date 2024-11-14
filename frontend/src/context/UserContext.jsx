@@ -1,34 +1,36 @@
-// UserContext.jsx
-import { createContext, useState, useEffect, useContext } from "react";
+import { createContext, useEffect , useState} from "react";
 
 export const UserContext = createContext();
 
-export const UserProvider = ({ children }) => {
-    const [user, setUser] = useState(() => {
-        // Load user data from localStorage on initial load
-        const savedUser = localStorage.getItem("user");
-        return savedUser ? JSON.parse(savedUser) : null;
-    });
+export const UserProvider = ({children}) => {
+    const [user, setUser] = useState(null);
 
-    // Update local storage whenever the user state changes
+    //check if the user is logged in when the component is mounted
+
     useEffect(() => {
-        if (user) {
-            localStorage.setItem("user", JSON.stringify(user));
-        } else {
-            localStorage.removeItem("user");
+        const loggedInUser = localStorage.getItem('user');
+        if(loggedInUser) {
+            setUser(JSON.parse(loggedInUser));
         }
-    }, [user]);
+    }, [])
 
+    //function to handle user login
+    const login = (userData) => {
+        setUser(userData);
+        localStorage.setItem('user', JSON.stringify(userData));
+        localStorage.setItem('token', userData.token);
+    }
+
+    //function to handle user logout
     const logout = () => {
         setUser(null);
-        localStorage.removeItem("user");
-    };
+        localStorage.removeItem('user');
+        localStorage.removeItem('token');
+    }
 
     return (
-        <UserContext.Provider value={{ user, setUser, logout }}>
+        <UserContext.Provider value={{user, login, logout }}>
             {children}
         </UserContext.Provider>
-    );
-};
-
-export const useUser = () => useContext(UserContext);
+    )
+}

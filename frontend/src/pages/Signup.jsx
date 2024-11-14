@@ -1,14 +1,8 @@
 import React, { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import api from '../api';
-import { useUser } from '../context/UserContext';
 
 const Signup = () => {
-    // const [formData, SetFormData] = useState({
-    //     email: '',
-    //     password: '',
-    //     confirmPassword: ''
-    // });
   
     const [ email, setEmail ] = useState('');
     const [password, setPassword ] = useState('');
@@ -16,14 +10,8 @@ const Signup = () => {
     const [error, setError] = useState('');
     const [success, setSuccess] = useState("");
 
-    const { setUser } = useUser();
-    
-
     const navigate = useNavigate()
-    // const handleChange = (e) => {
-    //     const { name , value} = e.target;
-    //     SetFormData({...formData, [name]: value });
-    // }
+
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -43,16 +31,12 @@ const Signup = () => {
 
         try {
             const response = await api.post('/auth/signup', { email, password });
-            setUser(response.data.user)
-            setSuccess("Signup successful");
-            console.log(email);
-            console.log(password)
-            //clear email and password
-            setEmail('');
-            setPassword('');
-            setConfirmPassword('');
-            setError("");
-            navigate('/')
+            if(response.status === 201) {
+                setSuccess("Signup successful!");
+                setTimeout(() => {
+                    navigate('/')
+                }, 2000);
+            }
         } catch (error) {
             setError(error.response?.data?.message || "Signup failed")
             console.log(error.response?.data?.message)

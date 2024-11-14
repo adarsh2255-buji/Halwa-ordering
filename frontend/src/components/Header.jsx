@@ -1,17 +1,19 @@
-// Header.jsx
-import React, { useRef, useEffect, useState } from 'react';
+import React, { useRef, useEffect, useState, useContext } from 'react';
 import { FaSearch } from "react-icons/fa";
 import { IoMdCart } from "react-icons/io";
 import { CgProfile } from "react-icons/cg";
 import { Link, useNavigate } from 'react-router-dom';
-import { useUser } from '../context/UserContext';
+import { UserContext } from '../context/UserContext';
+// import { useUser } from '../context/UserContext';
 
 const Header = () => {
     const [isProfileOpen, setIsProfileOpen] = useState(false);
-    const { user, logout } = useUser();
+    // const { user, setUser } = useUser();
+    const { user, logout } = useContext(UserContext)
     const navigate = useNavigate();
     const profileRef = useRef(null);
 
+    // Toggle profile dropdown
     const toggleProfileDropdown = () => {
         setIsProfileOpen(!isProfileOpen);
     };
@@ -27,13 +29,14 @@ const Header = () => {
     }, []);
 
     const handleLogoutClick = () => {
-        logout();
-        navigate('/');
+        logout() // Clear user state to log out
+        navigate('/'); // Redirect to homepage
     };
 
     return (
         <header className="bg-white shadow-md fixed top-0 left-0 w-full z-10">
             <div className="container mx-auto px-4 py-4 flex items-center justify-between">
+                {/* Logo */}
                 <div className="text-2xl font-bold text-gray-800">
                     <Link to='/'>HalwaStore</Link>
                 </div>
@@ -51,7 +54,7 @@ const Header = () => {
                 {/* Profile and Cart */}
                 <div className="hidden md:flex items-center space-x-4">
                     {/* Profile Dropdown */}
-                    <div className="relative" ref={profileRef}>
+                    <div className="relative" ref={profileRef} >
                         <CgProfile 
                             className="text-2xl text-gray-600 cursor-pointer" 
                             onClick={toggleProfileDropdown}
@@ -80,7 +83,10 @@ const Header = () => {
                     {/* Cart Icon */}
                     <div className="text-gray-600 relative">
                         <IoMdCart className="text-2xl" />
-                        <span className="absolute top-0 right-0 bg-red-500 text-white text-xs rounded-full px-1">3</span>
+                        <span className="absolute top-0 right-0 bg-red-500 text-white text-xs rounded-full px-1">
+                            {/* Display count if available */}
+                            {/* {user?.cartItems?.length || 0} */}
+                        </span>
                     </div>
                 </div>
             </div>

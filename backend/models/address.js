@@ -38,7 +38,6 @@ const addressSchema = new mongoose.Schema({
     },
     phoneNumber: {
         type: String,
-        required: true,
         minlength: 10,
         maxlength: 15,
         match: [/^\d{10}$/, 'Please enter a valid 10-digit phone number']

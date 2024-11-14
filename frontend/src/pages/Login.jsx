@@ -1,27 +1,17 @@
 import React, { useContext, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import api from '../api';
-import { UserContext, useUser } from '../context/UserContext';
+import { UserContext } from '../context/UserContext';
 
 const Login = () => {
-    // const [formData, SetFormData] = useState({
-    //     email: '',
-    //     password: '',
-    // });
-    const { login } = useUser();
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
-    const { setUser } = useUser()
-
     const [error, setError] = useState('');
     const [success, setSuccess] = useState("");
+    const { login } = useContext(UserContext);
+  
 
     const navigate = useNavigate()
-
-    // const handleChange = (e) => {
-    //     const { name , value} = e.target;
-    //     SetFormData({...formData, [name]: value });
-    // }
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -30,14 +20,18 @@ const Login = () => {
         setSuccess('');
 
         try {
-            const response = await api.post('/auth/login', { email, password});
-            setUser(response.data.user);
-            console.log(response.data)
-            // cleare email and password
-            setEmail('');
-            setPassword('');
-            setError("");
-            navigate('/');
+            const response = await api.post('/auth/login', { email, password}, {withCredentials: true});
+            const data = response.data
+            if(response.status === 200 || data) {
+                login(data);
+                setSuccess("Login successful");
+                console.log(email);
+                console.log(password)
+                //clear email and password
+                setEmail('');
+                setPassword('');
+                navigate('/');
+            }
             
         } catch (error) {
             setError(error.response?.data?.message || "Login failed")
@@ -86,7 +80,7 @@ const Login = () => {
                     {/* submit button */}
                     <button type='submit' 
                     className='w-full  bg-indigo-600 text-white py-2 mt-4 rounded-md hover:bg-indigo-700 transition duration-200'>
-                        Sign Up
+                        Login
                     </button>
 
                 </form>

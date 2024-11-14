@@ -1,172 +1,172 @@
-import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import React, { useState } from 'react'
 import api from '../api';
 
 const Profile = () => {
-  const [profile, setProfile] = useState({
+  const [formData, setFormData] = useState({
     username: '',
     gender: '',
-    phone: '',
-    address: ''
+    phoneNumber: '',
+    addressDetails: {
+      houseName: '',
+      pinCode: '',
+      locality: '',
+      district: '',
+      state : '',
+    }
   });
-  const [isEditing, setIsEditing] = useState(false);
-  const [loading, setLoading] = useState(false);
 
-  // Fetch profile data when component mounts
-  useEffect(() => {
-    const fetchProfile = async () => {
-      try {
-        setLoading(true);
-        const response = await api.get('/auth/profile', { withCredentials: true });
-        setProfile(response.data.profile);
-        setLoading(false);
-      } catch (error) {
-        console.error('Error fetching profile:', error);
-        setLoading(false);
-      }
-    };
+  const [message, setMessage] = useState("");
 
-    fetchProfile();
-  }, []);
-
-  // Handle form input changes
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setProfile((prevProfile) => ({
-      ...prevProfile,
-      [name]: value
-    }));
-  };
-
-  // Handle form submission to create or update profile
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    try {
-      const response = await api.post('/auth/profile', profile, { withCredentials: true });
-      console.log(response.data.message);
-      setIsEditing(false); // Set back to read-only mode after saving
-    } catch (error) {
-      console.error('Error saving profile:', error);
+    if(name in formData.addressDetails) {
+      setFormData({
+        ...formData,
+        addressDetails: {...formData.addressDetails, [name] : value },
+      });
+    } else {
+      setFormData({ ...formData, [name] : value});
     }
   };
 
-  // Toggle edit mode
-  const toggleEdit = () => {
-    setIsEditing(!isEditing);
-  };
-
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      const response = await api.post('/auth/profile', formData, {withCredentials: true});
+      setMessage(response.data.message);
+    } catch (error) {
+      setMessage(error.response?.data.message || "An error occurred");
+    }
+    }
   return (
-    <div className="max-w-md mx-auto bg-white shadow-md rounded-lg p-6 mt-8">
-      <h2 className="text-2xl font-bold mb-4">Personal Information</h2>
-      {loading ? (
-        <p>Loading...</p>
-      ) : (
-        <form onSubmit={handleSubmit}>
-          <div className="mb-4">
-            <label className="block text-gray-700">Username</label>
-            <input
-              type="text"
-              name="username"
-              value={profile.username}
-              onChange={handleChange}
-              readOnly={!isEditing}
-              className={`w-full px-4 py-2 border rounded-md ${
-                isEditing ? 'border-blue-500' : 'border-gray-300 bg-gray-100'
-              }`}
-            />
-          </div>
+    <>
+     <div className="container mx-auto pt-12 mt-12">
+            <div className="max-w-lg mx-auto bg-white shadow-md rounded-lg p-6">
+                <h2 className="text-2xl font-semibold mb-4 text-center">Personal Information</h2>
+                <form onSubmit={handleSubmit} className="space-y-4">
+                    {/* Username */}
+                    <div>
+                        <label className="block text-gray-700">Username</label>
+                        <input
+                            type="text"
+                            name="username"
+                            value={formData.username}
+                            onChange={handleChange}
+                            className="w-full px-4 py-2 border rounded-md focus:outline-none"
+                            required
+                        />
+                    </div>
 
-          <div className="mb-4">
-            <label className="block text-gray-700">Gender</label>
-            <div className="flex items-center space-x-4">
-              <label className="flex items-center">
-                <input
-                  type="radio"
-                  name="gender"
-                  value="male"
-                  checked={profile.gender === 'male'}
-                  onChange={handleChange}
-                  disabled={!isEditing}
-                  className="mr-2"
-                />
-                Male
-              </label>
-              <label className="flex items-center">
-                <input
-                  type="radio"
-                  name="gender"
-                  value="female"
-                  checked={profile.gender === 'female'}
-                  onChange={handleChange}
-                  disabled={!isEditing}
-                  className="mr-2"
-                />
-                Female
-              </label>
-              <label className="flex items-center">
-                <input
-                  type="radio"
-                  name="gender"
-                  value="other"
-                  checked={profile.gender === 'other'}
-                  onChange={handleChange}
-                  disabled={!isEditing}
-                  className="mr-2"
-                />
-                Other
-              </label>
+                    {/* Gender */}
+                    <div>
+                        <label className="block text-gray-700">Gender</label>
+                        <select
+                            name="gender"
+                            value={formData.gender}
+                            onChange={handleChange}
+                            className="w-full px-4 py-2 border rounded-md focus:outline-none"
+                            required
+                        >
+                            <option value="">Select Gender</option>
+                            <option value="male">Male</option>
+                            <option value="female">Female</option>
+                            <option value="other">Other</option>
+                        </select>
+                    </div>
+
+                    {/* Phone Number */}
+                    <div>
+                        <label className="block text-gray-700">Phone Number</label>
+                        <input
+                            type="text"
+                            name="phoneNumber"
+                            value={formData.phoneNumber}
+                            onChange={handleChange}
+                            className="w-full px-4 py-2 border rounded-md focus:outline-none"
+                            required
+                        />
+                    </div>
+
+                    {/* Address Details */}
+                    <h3 className="text-lg font-medium mt-4">Address Details</h3>
+
+                    <div>
+                        <label className="block text-gray-700">House Name</label>
+                        <input
+                            type="text"
+                            name="houseName"
+                            value={formData.addressDetails.houseName}
+                            onChange={handleChange}
+                            className="w-full px-4 py-2 border rounded-md focus:outline-none"
+                            required
+                        />
+                    </div>
+
+                    <div>
+                        <label className="block text-gray-700">Pin Code</label>
+                        <input
+                            type="text"
+                            name="pinCode"
+                            value={formData.addressDetails.pinCode}
+                            onChange={handleChange}
+                            className="w-full px-4 py-2 border rounded-md focus:outline-none"
+                            required
+                        />
+                    </div>
+
+                    <div>
+                        <label className="block text-gray-700">Locality</label>
+                        <input
+                            type="text"
+                            name="locality"
+                            value={formData.addressDetails.locality}
+                            onChange={handleChange}
+                            className="w-full px-4 py-2 border rounded-md focus:outline-none"
+                            required
+                        />
+                    </div>
+
+                    <div>
+                        <label className="block text-gray-700">District</label>
+                        <input
+                            type="text"
+                            name="district"
+                            value={formData.addressDetails.district}
+                            onChange={handleChange}
+                            className="w-full px-4 py-2 border rounded-md focus:outline-none"
+                            required
+                        />
+                    </div>
+
+                    <div>
+                        <label className="block text-gray-700">State</label>
+                        <input
+                            type="text"
+                            name="state"
+                            value={formData.addressDetails.state}
+                            onChange={handleChange}
+                            className="w-full px-4 py-2 border rounded-md focus:outline-none"
+                            required
+                        />
+                    </div>
+
+                    {/* Submit Button */}
+                    <button
+                        type="submit"
+                        className="w-full bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600"
+                    >
+                        Submit
+                    </button>
+                </form>
+
+                {/* Message */}
+                {message && (
+                    <p className="text-center mt-4 text-green-600">{message}</p>
+                )}
             </div>
-          </div>
+        </div>
+    </>
+  )
+}
 
-          <div className="mb-4">
-            <label className="block text-gray-700">Phone</label>
-            <input
-              type="text"
-              name="phone"
-              value={profile.phone}
-              onChange={handleChange}
-              readOnly={!isEditing}
-              className={`w-full px-4 py-2 border rounded-md ${
-                isEditing ? 'border-blue-500' : 'border-gray-300 bg-gray-100'
-              }`}
-            />
-          </div>
-
-          <div className="mb-4">
-            <label className="block text-gray-700">Address</label>
-            <textarea
-              name="address"
-              value={profile.address}
-              onChange={handleChange}
-              readOnly={!isEditing}
-              className={`w-full px-4 py-2 border rounded-md ${
-                isEditing ? 'border-blue-500' : 'border-gray-300 bg-gray-100'
-              }`}
-              rows="3"
-            />
-          </div>
-
-          <div className="flex justify-between items-center">
-            <button
-              type="button"
-              onClick={toggleEdit}
-              className="text-blue-500 hover:underline"
-            >
-              {isEditing ? 'Cancel' : 'Edit'}
-            </button>
-            {isEditing && (
-              <button
-                type="submit"
-                className="bg-blue-500 text-white px-4 py-2 rounded-md"
-              >
-                Save
-              </button>
-            )}
-          </div>
-        </form>
-      )}
-    </div>
-  );
-};
-
-export default Profile;
+export default Profile
