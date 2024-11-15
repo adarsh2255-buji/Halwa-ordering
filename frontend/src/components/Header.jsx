@@ -5,13 +5,15 @@ import { CgProfile } from "react-icons/cg";
 import { Link, useNavigate } from 'react-router-dom';
 import { UserContext } from '../context/UserContext';
 import { MdHome, MdExplore, MdAccountCircle, MdShoppingCart } from "react-icons/md";
+import api from '../api';
 
 // import { useUser } from '../context/UserContext';
 
 const Header = () => {
     const [isProfileOpen, setIsProfileOpen] = useState(false);
+    
     // const { user, setUser } = useUser();
-    const { user, logout } = useContext(UserContext)
+    const { user,username,  logout } = useContext(UserContext)
     const navigate = useNavigate();
     const profileRef = useRef(null);
 
@@ -35,6 +37,10 @@ const Header = () => {
         navigate('/'); // Redirect to homepage
     };
 
+    //Get user namw from user profile
+
+    
+
     return (
         <header className="bg-white shadow-md fixed top-0 left-0 w-full z-10">
             <div className="container mx-auto px-4 py-4 flex items-center justify-between">
@@ -53,6 +59,7 @@ const Header = () => {
                     />
                 </div>
 
+                <p className="block  text-black">{username}</p>
                 {/* Profile and Cart */}
                 <div className="hidden md:flex items-center space-x-4">
                     {/* Profile Dropdown */}
@@ -65,9 +72,7 @@ const Header = () => {
                             <div className="absolute right-0 mt-2 w-40 bg-white border rounded-lg shadow-lg py-2">
                                 {user ? (
                                     <>
-                                        <p className="block px-4 py-2 text-gray-600">
-                                            Hello, {user.username || "User"}
-                                        </p>
+                                        
                                         <Link to='/profile' className="block px-4 py-2 text-gray-600 hover:bg-gray-100">My Profile</Link>
                                         <Link to='/orders' className="block px-4 py-2 text-gray-600 hover:bg-gray-100">Orders</Link>
                                         <button onClick={handleLogoutClick} className="block px-4 py-2 text-gray-600 hover:bg-gray-100">Log Out</button>
