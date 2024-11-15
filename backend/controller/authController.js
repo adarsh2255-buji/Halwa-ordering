@@ -139,6 +139,60 @@ export const getUserWithProfile = async (req, res) => {
     }
 }
 
+// update user profile
+export const updateProfileData = async(req, res) => {
+    const { username, gender, addressDetails, phoneNumber } = req.body;
+
+    try {
+        const userId = req.user._id;
+
+        //Find users's profile
+        const profile = await Profile.findOne({ userId });
+        if(!profile) {
+            return res.status(404).josn({ message: "Profile not found"});
+        }
+
+        // Update profile details
+        if(username) profile.username = username;
+        if(gender) profile.gender = gender;
+        if(phoneNumber) profile.phoneNumber = phoneNumber;
+
+        //update the address associated with the profile, if it exists
+        if(profile.address && addressDetails) {
+            const address = await Address.findById(profile.address);
+
+            if(!address) {
+                return res.status(404).josn({ messae : "Address not found" });
+            }
+
+            //Update address fields
+            if(addressDetails.houseName) address.houseName = addressDetails.houseName;
+            if(addressDetails.pinCode) address.pinCode = addressDetails.pinCode;
+            if(addressDetails.locality) address.locality = addressDetails.locality;
+            if(addressDetails.district) address.district = addressDetails.district;;
+            if(addressDetails.state) address.state = addressDetails.state;
+            if(addressDetails.phoneNumber) address.phoneNumber = addressDetails.phoneNumber;
+
+            await address.save();
+        }
+
+        //save teh updated profile
+        await profile.save();
+
+        //Populate the updated user with profile address details for the response
+        const user = await User.findById(userId)
+        .populate({
+            path: "profile",
+            populate: { path : "address"}
+        });
+        res.status(200).json({ message: "Profile updated successfully", user });
+    } catch (error) {
+        res.status(500).json({ message: "Update profile data failed", error });
+        console.error(error);
+    }
+}
+
+
 //Get user 
 export const getUser = async (req, res) => {
     const userId = req.user._id;

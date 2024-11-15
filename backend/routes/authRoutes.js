@@ -1,7 +1,7 @@
 import express from 'express';
 // import { createOrUpdateProfile, getUser, getUserProfileById, login, logout, signup, updatePassword, } from '../controller/authController.js';
 import authMiddleware from '../middleware/authMiddleware.js';
-import { addProfileData, getUserWithProfile, login, signup } from '../controller/authController.js';
+import { addProfileData, getUserWithProfile, login, signup, updateProfileData } from '../controller/authController.js';
 
 const router = express.Router();
 
@@ -17,5 +17,6 @@ router.post('/login', login);
 // router.post('/logout', logout);
 router.post('/profile', authMiddleware, addProfileData);
 router.get('/profile', authMiddleware, getUserWithProfile)
+router.put('/profile/update', authMiddleware, updateProfileData);
 
 export default router; 
