@@ -192,7 +192,28 @@ export const updateProfileData = async(req, res) => {
     }
 }
 
+//Get user address
+export const getUserAddress = async (req, res) => {
+    try {
+        const userId = req.user._id
+        //Find the user and populate the address
+        const user = await User.findById(userId).populate('profile');
 
+        if(!user || !user.profile || !user.profile.address) {
+            return res.status(404).json({ message: "User not found or address not found" });
+        }
+
+        //Retrieve the addres details
+        const address = await Address.findById(user.profile.address);
+        if(!address) {
+            return res.status(404).json({ message: "Address not found" });
+        }
+        res.status(200).json({ message: "Address fetched successfully", address });
+    } catch (error) {
+        res.status(500).json({ message: "Get user address failed", error });
+        console.error(error);
+    }
+}
 //Get user 
 export const getUser = async (req, res) => {
     const userId = req.user._id;
