@@ -1,55 +1,64 @@
 import mongoose from "mongoose";
 
-const orderSchema = new mongoose.Schema({
-    userId: {
+const orderItemSchema = new mongoose.Schema({
+    product: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: "user",
+        ref: "Product",
         required: true
     },
-    products: [
-        {
-            productId: {
-                type: mongoose.Schema.Types.ObjectId,
-                ref: "Product"
-            },
-            quantity: {
-                type: Number,
-                required: true,
-                min: 1
-            }
-        }
-    ],
-    totalAmount: {
+    quantity: {
         type: Number,
-        required: true
-    },
-    status: {
-        type: String,
-        enum: ['Pending', 'Processing', 'Shipped', 'Delivered', 'Cancelled', ],
-        default: 'Pending'
-    },
-    address: {
-        type: String,
-        required: true
-    },
-    phoneNumber: {
-        type: String,
         required: true,
-        match: /^\d{10}$/
+        min: 1
     },
-    paymentStatus: {
-        tyep: String,
-        enum: ["Pending", "Paid", "Failed"]
-    },
-    createdAt: {
-        type: Date,
-        default: Date.now()
-    },
-    updatedAt: {
-        type: Date,
-        default: Date.now()
+    price: {
+        type: Number,
+        required: true,
+        min: 0
     }
-})
+});
 
-const Order = mongoose.model('Order', orderSchema);
-export default Order; 
+// order schema 
+
+const orderSchema = new mongoose.Schema({
+        user: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "User",
+            required: true
+        },
+        orderItems: [orderItemSchema], //Array of items in the order
+        shippindAddress: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "Address",
+            required: true
+        },
+        paymentMethod: {
+            type: String,
+            enum: ['COD', "Credit Card", "PayPal", "UPI"],
+            default: "COD",
+            required: true
+        },
+        paymentStatus: {
+            type: String,
+            enum: ['Pending', 'Paid'],
+            default: 'Pending',
+            required: true
+        },
+        totalPrice : {
+            type: Number,
+            required: true,
+            min: 0
+        },
+        orderStatus: {
+            type: String,
+            enum: ['Processing', 'Shipped', 'Delivered' ,'Pending', 'Cancelled'],
+            default: 'Processing'
+        },
+        orderDate: {
+            type: Date,
+            default: Date.now()
+        },
+
+},{timestamps: true});
+
+export default mongoose.model("Order", orderSchema);
