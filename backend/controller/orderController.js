@@ -1,54 +1,38 @@
-import { response } from 'express';
 import Product from '../models/product.js'
 import Order from '../models/order.js';
 import User from '../models/user.js';
-
+import Address from '../models/address.js'
 // Create a new order
 export const createOrder = async(req, res) => {
-    const { products } = req.body;
-    const userId = req.userId; 
-
+    const { orderItems, shippingAddressId, paymentMethod } = req.body;
+     
     try {
-        // Fetch user details to get address and phone number
-        const user = await User.findById(userId);
-        if(!user) {
-            return res.status(401).json({ message: "user not found" });
-        }
-        const { phoneNumber, address } = user;
-        if(!phoneNumber ||!address) {
-            return res.status(400).json({ message: "Address and phone number are required" });
+        const userId = req.user._id;
+
+        //validate address
+        const address = await Address.findById(shippingAddressId);;
+        if(!address) {
+            return res.status(400).json({ message: "Address is required" });
         }
 
         //Calculate total amount based on product prices
         let totalAmount = 0;
-        for(const item of products) {
+        for(const item of orderItems) {
             const product = await Product.findById(item.productId);
-            if(!product) {
-                return res.status(404).json({ message: "Product not found" });
+            if(!product || product.quantity < item.quantity) {
+                return res.status(400).json({ message: `Product ${product.name} is out of stock or has insufficient quantity` });
             }
-            if(product.quantity < item.quantity ) {
-                return res.status(400).json({ message: `Insufficient stock for ${product.name}` });
-            }
-
-            // Calculate total amount for this product
             totalAmount += product.price * item.quantity;
-
-            // Decrease the quantity of the product
-            product.quantity -= item.quantity;
-            await product.save();
         }
-
         // Create and save the new order
-        const newOrder = new Order({
-            userId,
-            products,
+        const order = new Order({
+            user : userId,
+            orderItems,
             totalAmount, 
-            address,
-            phoneNumber,
-            status: 'Pending',
-            paymentStatus: "Pending",
+            shippingAddress: shippingAddressId,
+            totalPrice,
         })
-        await newOrder.save();
+        await order.save();
         res.status(201).json({ message : "Order placed successfully", order : newOrder})
     } catch (error) {
         res.status(500).json({ message: "Order failed", error})
