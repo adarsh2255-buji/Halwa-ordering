@@ -147,45 +147,30 @@ export const updateProfileData = async(req, res) => {
         const userId = req.user._id;
 
         //Find users's profile
-        const profile = await Profile.findOne({ userId });
+        const profile = await Profile.findOneAndUpdate(
+            { userId },
+            { username, gender, phoneNumber },
+            { new: true}
+        );
         if(!profile) {
             return res.status(404).josn({ message: "Profile not found"});
         }
 
-        // Update profile details
-        if(username) profile.username = username;
-        if(gender) profile.gender = gender;
-        if(phoneNumber) profile.phoneNumber = phoneNumber;
+        // update the address if it exists
+        const address = await Address.findOneAndUpdate(
+            { user : userId},
+            {...addressDetails},
+            { new : true}
+        );
 
-        //update the address associated with the profile, if it exists
-        if(profile.address && addressDetails) {
-            const address = await Address.findById(profile.address);
-
-            if(!address) {
-                return res.status(404).josn({ messae : "Address not found" });
-            }
-
-            //Update address fields
-            if(addressDetails.houseName) address.houseName = addressDetails.houseName;
-            if(addressDetails.pinCode) address.pinCode = addressDetails.pinCode;
-            if(addressDetails.locality) address.locality = addressDetails.locality;
-            if(addressDetails.district) address.district = addressDetails.district;;
-            if(addressDetails.state) address.state = addressDetails.state;
-            if(addressDetails.phoneNumber) address.phoneNumber = addressDetails.phoneNumber;
-
-            await address.save();
+        if(!address) {
+            return res.status(404).json({ message: "Address not found"});
         }
 
-        //save teh updated profile
-        await profile.save();
-
-        //Populate the updated user with profile address details for the response
-        const user = await User.findById(userId)
-        .populate({
-            path: "profile",
-            populate: { path : "address"}
-        });
-        res.status(200).json({ message: "Profile updated successfully", user });
+        res.status(200).json({ message: "updated",
+            profile: { ...profile.toObject(), address}
+        })
+        
     } catch (error) {
         res.status(500).json({ message: "Update profile data failed", error });
         console.error(error);
@@ -214,6 +199,30 @@ export const getUserAddress = async (req, res) => {
         console.error(error);
     }
 }
+
+//Address update
+export const updateAddressData = async (req, res) => {
+    const { houseName, pinCode, locality, district, state } = req.body;
+    const userId = req.user._id;
+  
+    try {
+      // Update address for the user
+      const updatedAddress = await Address.findOneAndUpdate(
+        { user: userId },
+        { houseName, pinCode, locality, district, state },
+        { new: true }
+      );
+  
+      if (!updatedAddress) {
+        return res.status(404).json({ message: "Address not found" });
+      }
+  
+      res.status(200).json({ message: "Address updated successfully", address: updatedAddress });
+    } catch (error) {
+      res.status(500).json({ message: "Failed to update address", error });
+    }
+  };
+  
 //Get user 
 export const getUser = async (req, res) => {
     const userId = req.user._id;
