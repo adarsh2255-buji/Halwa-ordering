@@ -1,9 +1,12 @@
 import React, { useEffect, useState } from 'react'
 import api from '../api/index';
+import { useNavigate } from 'react-router-dom'
+
 const Products = () => {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const navigate = useNavigate()
 
   useEffect(() => {
     const fetchProducts = async () => {
@@ -19,6 +22,11 @@ const Products = () => {
     }
     fetchProducts();
   }, [])
+
+  //Buy button
+  const handleBuyButton = (product) => {
+    navigate('/order/new', { state : { product }})
+  };
 
   if(loading) return <p className='text-center'>Loading products...</p>
   if(error) return <p className='text-center text-red-500'>Error: {error}</p>
@@ -37,8 +45,13 @@ const Products = () => {
               <h2 className='text-xl font-semibold mb-2'>{product.name}</h2>
               <p className='text-gray-700 mb-2'>{product.description}</p>
               <p className='text-lg font-bold mb-4'>₹{product.price}</p>
-              <button className='bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600'>
-                Add to Cart
+              <button 
+              className='bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600'
+              onClick={() => handleBuyButton(product)}>
+                Buy
+              </button> 
+              <button className='bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600 ml-2'>
+                Add To Cart
               </button>
             </div>
           ))
